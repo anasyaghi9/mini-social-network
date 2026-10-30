@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+  
+  <div class="level mb-5">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title is-3 text-uppercase">
+          {{ profile.user.username }}'s Dweets
+        </h1>
+      </div>
+    </div>
+
+    <div class="level-right">
+      <div class="level-item">
+        <form method="post">
+          {% csrf_token %}
+          <div class="buttons has-addons">
+            {% if profile in user.profile.follows.all %}
+              <button class="button is-success is-static" type="button">Follow</button>
+              <button class="button is-danger" name="follow" value="unfollow">
+                Unfollow
+              </button>
+            {% else %}
+              <button class="button is-success" name="follow" value="follow">
+                Follow
+              </button>
+              <button class="button is-danger is-static" type="button">Unfollow</button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+
+      <div class="level-item ml-3">
+        <a href="http://127.0.0.1:8000/profile_list/" class="button is-link is-outlined">All Profiles</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    
+    <div class="column is-7">
+      <h2 class="subtitle is-4"><strong>Dweets</strong></h2>
+      <div class="content">
+        {% for dweet in profile.user.dweets.all %}
+          <div class="box">
+            {{ dweet.body }}
+            <br>
+            <span class="is-small has-text-grey-light">
+              ({{ dweet.created_at }})
+            </span>
+          </div>
+        {% empty %}
+          <div class="box has-text-grey">
+            No dweets posted yet.
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Right Column: Following & Followers Lists -->
+    <div class="column is-5">
+      
+      <!-- Following List -->
+      <div class="box mb-4">
+        <h3 class="subtitle is-5">
+          <strong>{{ profile.user.username }}</strong> follows:
+        </h3>
+        <hr>
+        <div class="content">
+          {% for following in profile.follows.all %}
+            <p class="is-size-6 mb-2">• {{ following }}</p>
+          {% empty %}
+            <p class="has-text-grey">Not following anyone yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Followers List -->
+      <div class="box">
+        <h3 class="subtitle is-5">
+          <strong>{{ profile.user.username }}</strong> is followed by:
+        </h3>
+        <hr>
+        <div class="content">
+          {% for follower in profile.followed_by.all %}
+            <p class="is-size-6 mb-2">• {{ follower }}</p>
+          {% empty %}
+            <p class="has-text-grey">No followers yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock content %}
